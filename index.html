@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TSL / GTT Pro v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#080c14;--bg2:#0e1421;--bg3:#131c2e;--bg4:#1a2540;
+  --border:#1e2d45;--border2:#253550;
+  --accent:#00e5a0;--accent2:#00b4d8;--accent3:#7c3aed;
+  --danger:#ff4560;--warn:#ffb300;--profit:#00e5a0;
+  --text:#e8eef8;--muted:#4a6080;--muted2:#6b8099;
+  --card:#0e1421;--card2:#111827;
+  --groww:#ff5722;--kite:#387ed1;
+  --r:12px;
+}
+body.light{
+  --bg:#f4f6fb;--bg2:#ffffff;--bg3:#eef1f7;--bg4:#e2e8f4;
+  --border:#d1daea;--border2:#bbc8de;
+  --accent:#059669;--accent2:#0284c7;--accent3:#7c3aed;
+  --danger:#dc2626;--warn:#d97706;--profit:#059669;
+  --text:#0f172a;--muted:#64748b;--muted2:#94a3b8;
+  --card:#ffffff;--card2:#f8fafc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding-bottom:72px}
+
+/* HEADER */
+header{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;gap:12px;
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{
+  width:32px;height:32px;background:var(--accent);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#000;
+  letter-spacing:-0.5px;flex-shrink:0;
+}
+.logo h1{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:1.5px;font-family:'JetBrains Mono',monospace}
+.logo p{font-size:9px;color:var(--muted2);margin-top:1px;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.header-actions{display:flex;align-items:center;gap:8px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,229,160,0.4)}50%{opacity:0.5;box-shadow:0 0 0 4px rgba(0,229,160,0)}}
+.hbtn{padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted2);font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.hbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* POSITIONS BAR */
+.pos-bar{margin:12px 12px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.pos-bar-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border)}
+.pos-bar-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase}
+.add-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--accent);color:#000;border:none;border-radius:20px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.5px}
+.pos-scroll{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;scrollbar-width:none;min-height:52px;align-items:center}
+.pos-scroll::-webkit-scrollbar{display:none}
+.pos-chip{flex-shrink:0;padding:6px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;position:relative;min-width:80px}
+.pos-chip:hover,.pos-chip.active{border-color:var(--accent);background:rgba(0,229,160,.06)}
+.pos-chip-sym{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text)}
+.pos-chip.active .pos-chip-sym{color:var(--accent)}
+.pos-chip-sub{font-size:9px;color:var(--muted2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.chip-del{position:absolute;top:3px;right:5px;font-size:10px;color:var(--muted);opacity:0;cursor:pointer;padding:1px 3px;border-radius:3px;transition:opacity .15s}
+.pos-chip:hover .chip-del{opacity:1}
+.chip-del:hover{color:var(--danger)}
+.pos-empty{font-size:11px;color:var(--muted);font-style:italic}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:500px;padding:0 0 24px;animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:3px;background:var(--border2);border-radius:2px;margin:10px auto 14px}
+.modal-ttl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;padding:0 20px 12px;border-bottom:1px solid var(--border)}
+.modal-body{padding:14px 20px 0;display:flex;flex-direction:column;gap:11px}
+.mfield label{display:block;font-size:9px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.mfield input,.mfield select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:15px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .15s}
+.mfield input:focus,.mfield select:focus{border-color:var(--accent)}
+.mfield select option{background:var(--bg2)}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-acts{display:flex;gap:10px;padding:14px 20px 0}
+.mbtn-save{flex:1;padding:12px;background:var(--accent);color:#000;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;cursor:pointer}
+.mbtn-cancel{padding:12px 18px;background:var(--bg3);color:var(--muted2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:'JetBrains Mono',monospace;cursor:pointer}
+
+/* SECTION */
+.sec{margin:12px 12px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.sec-ttl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;padding:11px 16px 9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sec-ttl .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block}
+
+/* POSITION ALERT */
+.pos-alert{margin:12px 12px 0;background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.25);border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text);line-height:1.5}
+.pos-alert .ai{font-size:16px;flex-shrink:0;margin-top:1px}
+.pos-alert strong{color:var(--warn);font-family:'JetBrains Mono',monospace}
+
+/* INPUT GRID */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.icell{background:var(--card);padding:14px 16px;position:relative}
+.icell label{font-size:9px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-family:'JetBrains Mono',monospace;display:block;margin-bottom:6px}
+.irow{display:flex;align-items:center;gap:6px}
+.curr-sym{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted2)}
+.icell input[type=number]{background:none;border:none;outline:none;color:var(--text);font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;width:100%}
+.icell input[type=number]::placeholder{color:var(--border2)}
+.ihelper{font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.iwarn{font-size:10px;color:var(--warn);margin-top:4px;display:none}
+.iwarn.show{display:block}
+.qty-wrap{display:flex;align-items:center;gap:10px}
+.qty-btn{width:28px;height:28px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.qty-btn:hover{border-color:var(--accent);color:var(--accent)}
+.prefill-btn{width:100%;margin-top:8px;padding:5px;background:transparent;border:1px dashed rgba(0,229,160,.35);border-radius:6px;color:var(--accent);font-size:9px;letter-spacing:1px;cursor:pointer;font-family:'JetBrains Mono',monospace}
+.prefill-btn:hover{background:rgba(0,229,160,.07)}
+
+/* STRATEGY */
+.strat-row{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);gap:14px}
+.strat-row:last-child{border-bottom:none}
+.strat-label{flex:1;font-size:12px;color:var(--text)}
+.strat-label small{display:block;font-size:10px;color:var(--muted2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.strat-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);min-width:40px;text-align:right;font-weight:700}
+input[type=range]{-webkit-appearance:none;width:90px;height:3px;background:var(--bg4);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 0 3px rgba(0,229,160,.15)}
+
+/* PROGRESS */
+.progress-sec{padding:14px 16px}
+.progress-hdr{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-lbl{font-size:11px;color:var(--muted2);font-family:'JetBrains Mono',monospace}
+.progress-pct{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);font-weight:700}
+.pbar{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:3px;transition:width .5s ease;width:0%}
+.pbar-stops{display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.mcell{background:var(--card);padding:13px 16px}
+.mlbl{font-size:9px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.mval{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700}
+.msub{font-size:10px;color:var(--muted2);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.green{color:var(--profit)}.red{color:var(--danger)}.blue{color:var(--accent2)}.amber{color:var(--warn)}
+
+/* PRICE MAP */
+.price-map{}
+.prow{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);gap:12px;transition:background .15s}
+.prow:last-child{border-bottom:none}
+.prow:hover{background:rgba(255,255,255,.015)}
+.picon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.pinfo{flex:1}
+.pname{font-size:12px;font-weight:600}
+.pdesc{font-size:10px;color:var(--muted2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.pright{text-align:right}
+.pval{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
+.ppct{font-size:10px;color:var(--muted2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.badge{font-size:9px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.badge-entry{background:rgba(0,180,216,.12);color:var(--accent2);border:1px solid var(--accent2)}
+.badge-sl{background:rgba(255,69,96,.12);color:var(--danger);border:1px solid var(--danger)}
+.badge-tp{background:rgba(0,229,160,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge-warn{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid var(--warn)}
+.badge-muted{background:rgba(74,96,128,.12);color:var(--muted2);border:1px solid var(--muted2)}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--border)}
+.tab-btn{flex:1;padding:11px 0;background:none;border:none;border-bottom:2px solid transparent;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;cursor:pointer;color:var(--muted2);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.tab-btn.active{border-bottom-color:var(--accent);color:var(--accent)}
+.tab-groww-dot{width:8px;height:8px;border-radius:50%;background:var(--groww);flex-shrink:0}
+.tab-kite-dot{width:8px;height:8px;border-radius:50%;background:var(--kite);flex-shrink:0}
+
+/* PLATFORM ORDER BOX */
+.platform-order{margin:12px 14px 0;background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.platform-hdr-groww{background:var(--groww);padding:9px 14px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px}
+.platform-hdr-kite{background:var(--kite);padding:9px 14px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px}
+.order-field{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);gap:12px}
+.order-field:last-child{border-bottom:none}
+.of-left .of-name{font-size:12px;color:var(--text);font-weight:600}
+.of-left .of-desc{font-size:9px;color:var(--muted2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.of-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.of-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700}
+.copy-btn{padding:5px 11px;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;letter-spacing:.5px}
+.copy-btn:hover{opacity:.85}
+.copy-btn.copied{background:var(--accent)!important;color:#000!important}
+
+/* TP BOX */
+.tp-box{margin:10px 14px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tp-box-text{font-size:12px;color:var(--text);flex:1}
+.tp-box-text strong{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:14px}
+
+/* CHECKLIST */
+.checklist{padding:4px 14px 12px}
+.check-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;padding:10px 0 7px;display:block}
+.ci{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.ci:last-child{border-bottom:none}
+.ci-num{width:20px;height:20px;background:var(--bg4);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted2);flex-shrink:0;margin-top:1px}
+.ci-text{color:var(--text);line-height:1.5}
+.ci-text span{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:11px}
+.ci-text strong{color:var(--warn)}
+
+/* SCENARIO */
+.scen-wrap{padding:0 16px 14px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted2);text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+td{padding:9px 6px;border-bottom:1px solid rgba(30,45,69,.5)}
+tr:last-child td{border-bottom:none}
+.trow-hi{background:rgba(0,229,160,.03)}
+
+/* COPY ALL BOX */
+.copyall-box{margin:12px 12px 0;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted2);white-space:pre-line;line-height:1.8;position:relative}
+.copyall-box .ca-btn{position:absolute;top:10px;right:10px;padding:5px 10px;background:var(--accent);color:#000;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace}
+
+/* DISCLAIMER */
+.disclaimer{margin:12px 12px 0;padding:11px 14px;background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.15);border-radius:8px;font-size:10px;color:var(--muted2);line-height:1.6}
+.disclaimer strong{color:var(--warn)}
+
+/* STATUS BAR */
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:8px;z-index:99}
+.sbtn{flex:1;padding:11px;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;transition:all .15s}
+.sbtn:hover{opacity:.87}
+.sbtn:active{transform:scale(.97)}
+.sbtn-reset{background:var(--bg3);color:var(--muted2);border:1px solid var(--border)}
+.sbtn-copy{background:var(--accent);color:#000}
+.sbtn-tg{background:#0088cc;color:#fff}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">GTT</div>
+    <div>
+      <h1>TSL / GTT PRO v6</h1>
+      <p>GROWW &middot; KITE &middot; ZERODHA</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="live-dot" title="Live"></div>
+    <button class="hbtn" id="themeBtn" onclick="toggleTheme()">&#9728; LIGHT</button>
+  </div>
+</header>
+
+<!-- POSITIONS BAR -->
+<div class="pos-bar">
+  <div class="pos-bar-hdr">
+    <span class="pos-bar-title">Your Positions</span>
+    <button class="add-btn" onclick="openModal()">+ Add Position</button>
+  </div>
+  <div class="pos-scroll" id="posScroll">
+    <span class="pos-empty" id="posEmpty">No positions yet &mdash; tap + Add Position</span>
+  </div>
+</div>
+
+<!-- KITE SOLD ALERT (shown when relevant) -->
+<div class="pos-alert" id="kiteAlert" style="display:none">
+  <span class="ai">&#9888;&#65039;</span>
+  <span><strong>KITE SOLD HOLDING DETECTED</strong> &mdash; Kite shows negative qty from a sold holding. Adjust net qty below to avoid double-selling. Net qty = Holdings &minus; Already sold.</span>
+</div>
+
+<!-- POSITION DETAILS -->
+<div class="sec" id="posDetailSec">
+  <div class="sec-ttl"><span class="dot"></span><span id="posSecTitle">Position Details</span></div>
+  <div class="input-grid">
+    <div class="icell">
+      <label>Buy Price (Entry)</label>
+      <div class="irow">
+        <span class="curr-sym" id="cs1">&#8377;</span>
+        <input type="number" id="buyPrice" placeholder="1750" oninput="calc()"/>
+      </div>
+      <div class="ihelper">Avg buy price per share</div>
+    </div>
+    <div class="icell">
+      <label>Current LTP <span style="color:var(--accent);font-size:9px">per share</span></label>
+      <div class="irow">
+        <span class="curr-sym" id="cs2">&#8377;</span>
+        <input type="number" id="ltp" placeholder="1834" oninput="validateLTP();calc()"/>
+      </div>
+      <div class="ihelper">Market price per share</div>
+      <div class="iwarn" id="ltpWarn">&#9888; Looks like capital not LTP &mdash; enter price per share</div>
+      <button class="prefill-btn" onclick="prefillLTP()">&#8627; USE BUY PRICE AS LTP</button>
+    </div>
+    <div class="icell">
+      <label>Quantity (Shares)</label>
+      <div class="qty-wrap">
+        <button class="qty-btn" onclick="changeQty(-1)">&minus;</button>
+        <input type="number" id="qty" placeholder="10" oninput="calc()" style="font-size:22px;font-weight:700;width:60px"/>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      <div class="ihelper">Net shares to protect</div>
+    </div>
+    <div class="icell">
+      <label>Capital Invested</label>
+      <div class="irow">
+        <span class="curr-sym" id="cs3">&#8377;</span>
+        <span id="capitalDisp" style="font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace">&mdash;</span>
+      </div>
+      <div class="ihelper" id="capitalHelper">= Buy &times; Qty</div>
+    </div>
+  </div>
+</div>
+
+<!-- STRATEGY -->
+<div class="sec">
+  <div class="sec-ttl"><span class="dot"></span>Strategy Parameters</div>
+  <div class="strat-row">
+    <div class="strat-label">Fixed SL %<small>Hard stop &mdash; always active</small></div>
+    <input type="range" id="slPct" min="1" max="15" value="5" step="0.5" oninput="calc();document.getElementById('slPctV').textContent=this.value+'%'"/>
+    <div class="strat-val" id="slPctV">5%</div>
+  </div>
+  <div class="strat-row">
+    <div class="strat-label">TSL Activates at %<small>Gain needed to start trailing</small></div>
+    <input type="range" id="tslActPct" min="3" max="30" value="10" oninput="calc();document.getElementById('tslActV').textContent=this.value+'%'"/>
+    <div class="strat-val" id="tslActV">10%</div>
+  </div>
+  <div class="strat-row">
+    <div class="strat-label">Trail % Below Peak<small>TSL trails this far from high</small></div>
+    <input type="range" id="trailPct" min="1" max="15" value="5" step="0.5" oninput="calc();document.getElementById('trailV').textContent=this.value+'%'"/>
+    <div class="strat-val" id="trailV">5%</div>
+  </div>
+  <div class="strat-row">
+    <div class="strat-label">Limit Buffer Below Trigger<small>Limit price = trigger &times; (1 &minus; buffer)</small></div>
+    <input type="range" id="bufPct" min="0.1" max="2" value="0.5" step="0.1" oninput="calc();document.getElementById('bufV').textContent=parseFloat(this.value).toFixed(1)+'%'"/>
+    <div class="strat-val" id="bufV">0.5%</div>
+  </div>
+  <div class="strat-row">
+    <div class="strat-label">Take Profit %<small>Hard TP &mdash; exit at this gain</small></div>
+    <input type="range" id="tpPct" min="3" max="60" value="8" oninput="calc();document.getElementById('tpPctV').textContent=this.value+'%'"/>
+    <div class="strat-val" id="tpPctV">8%</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="sec">
+  <div class="sec-ttl"><span class="dot"></span>TSL Activation Progress</div>
+  <div class="progress-sec">
+    <div class="progress-hdr">
+      <span class="progress-lbl" id="progressLbl">Waiting for TSL activation...</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="pbar"><div class="pbar-fill" id="pbarFill"></div></div>
+    <div class="pbar-stops"><span id="stopBuy">Buy</span><span id="stopTSL">TSL</span><span id="stopTP">TP</span></div>
+  </div>
+</div>
+
+<!-- METRICS -->
+<div class="sec">
+  <div class="sec-ttl"><span class="dot"></span>Live Position Metrics</div>
+  <div class="metrics-grid">
+    <div class="mcell">
+      <div class="mlbl">Unrealised P&L</div>
+      <div class="mval" id="mPnl">&mdash;</div>
+      <div class="msub" id="mPnlPct">&mdash;</div>
+    </div>
+    <div class="mcell">
+      <div class="mlbl">Portfolio Value</div>
+      <div class="mval blue" id="mPortfolio">&mdash;</div>
+      <div class="msub" id="mReturn">&mdash;</div>
+    </div>
+    <div class="mcell">
+      <div class="mlbl">P&L at Fixed SL</div>
+      <div class="mval red" id="mSLLoss">&mdash;</div>
+      <div class="msub">if SL triggered now</div>
+    </div>
+    <div class="mcell">
+      <div class="mlbl">Max Profit (TSL)</div>
+      <div class="mval green" id="mMaxProfit">&mdash;</div>
+      <div class="msub" id="mMaxSub">activate TSL first</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE MAP -->
+<div class="sec">
+  <div class="sec-ttl"><span class="dot"></span>Price Level Map</div>
+  <div class="price-map">
+    <div class="prow">
+      <div class="picon" style="background:rgba(0,180,216,.1)">&#127919;</div>
+      <div class="pinfo"><div class="pname">Buy Price (Entry)</div><div class="pdesc">Avg entry / cost basis</div></div>
+      <div class="pright"><div class="pval blue" id="mapBuy">&mdash;</div><div class="ppct">+0.00%</div></div>
+      <span class="badge badge-entry">ENTRY</span>
+    </div>
+    <div class="prow">
+      <div class="picon" style="background:rgba(255,69,96,.1)">&#128721;</div>
+      <div class="pinfo"><div class="pname">Fixed Stop-Loss</div><div class="pdesc">Hard SL &mdash; GTT trigger</div></div>
+      <div class="pright"><div class="pval red" id="mapSL">&mdash;</div><div class="ppct" id="mapSLPct">&mdash;</div></div>
+      <span class="badge badge-sl">FIXED SL</span>
+    </div>
+    <div class="prow">
+      <div class="picon" style="background:rgba(0,229,160,.1)">&#128200;</div>
+      <div class="pinfo"><div class="pname">Take Profit</div><div class="pdesc">Hard exit target</div></div>
+      <div class="pright"><div class="pval green" id="mapTP">&mdash;</div><div class="ppct" id="mapTPPct">&mdash;</div></div>
+      <span class="badge badge-tp">TP</span>
+    </div>
+    <div class="prow">
+      <div class="picon" style="background:rgba(255,179,0,.1)">&#9889;</div>
+      <div class="pinfo"><div class="pname">TSL Activation Price</div><div class="pdesc">Trailing kicks in here</div></div>
+      <div class="pright"><div class="pval amber" id="mapTSLAct">&mdash;</div><div class="ppct" id="mapTSLActPct">&mdash;</div></div>
+      <span class="badge badge-warn" id="mapTSLBadge">PENDING</span>
+    </div>
+    <div class="prow">
+      <div class="picon" style="background:rgba(0,229,160,.1)">&#128205;</div>
+      <div class="pinfo"><div class="pname">Current LTP</div><div class="pdesc">Live market price</div></div>
+      <div class="pright"><div class="pval green" id="mapCurrent">&mdash;</div><div class="ppct" id="mapCurrentPct">&mdash;</div></div>
+      <span class="badge badge-tp" id="mapCurrentBadge">LIVE</span>
+    </div>
+    <div class="prow">
+      <div class="picon" style="background:rgba(100,116,139,.1)">&#128257;</div>
+      <div class="pinfo"><div class="pname">TSL Trail Price</div><div class="pdesc">Update GTT when TSL active</div></div>
+      <div class="pright"><div class="pval" id="mapTrail" style="color:var(--muted2)">&mdash;</div><div class="ppct" id="mapTrailPct">&mdash;</div></div>
+      <span class="badge badge-muted" id="mapTrailBadge">INACTIVE</span>
+    </div>
+  </div>
+</div>
+
+<!-- PLATFORM SETUP (TABS) -->
+<div class="sec">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabGroww" onclick="switchTab('groww')">
+      <span class="tab-groww-dot"></span>GROWW
+    </button>
+    <button class="tab-btn" id="tabKite" onclick="switchTab('kite')">
+      <span class="tab-kite-dot"></span>KITE (ZERODHA)
+    </button>
+  </div>
+
+  <!-- &#9472;&#9472; GROWW PANEL &#9472;&#9472; -->
+  <div id="panelGroww">
+    <div class="platform-order">
+      <div class="platform-hdr-groww">&#128992; TRIGGER ORDERS &mdash; SELL</div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">If price reaches</div>
+          <div class="of-desc">Fixed SL trigger price</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val red" id="g-trigger">&mdash;</div>
+          <button class="copy-btn" style="background:var(--danger);color:#fff" onclick="copyField('g-trigger',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">Qty NSE</div>
+          <div class="of-desc">Shares to sell (available)</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val" id="g-qty">&mdash;</div>
+          <button class="copy-btn" style="background:var(--bg4);color:var(--text);border:1px solid var(--border)" onclick="copyField('g-qty',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">Limit price</div>
+          <div class="of-desc" id="g-limit-desc">0.5% below trigger</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val amber" id="g-limit">&mdash;</div>
+          <button class="copy-btn" style="background:var(--warn);color:#000" onclick="copyField('g-limit',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field" style="background:rgba(0,180,216,.04)">
+        <div class="of-left">
+          <div class="of-name">If price reaches <span style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace">TSL UPDATE</span></div>
+          <div class="of-desc">Edit GTT when TSL activates</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val blue" id="g-tsl">&mdash;</div>
+          <button class="copy-btn" style="background:var(--accent2);color:#fff" onclick="copyField('g-tsl',this)">COPY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-box">
+      <div class="tp-box-text">&#127919; Take Profit &mdash; <em>If price reaches:</em> <strong id="g-tp">&mdash;</strong></div>
+      <button class="copy-btn" style="background:var(--accent);color:#000" onclick="copyField('g-tp',this)">COPY</button>
+    </div>
+
+    <div class="checklist">
+      <span class="check-lbl">Setup Steps</span>
+      <div class="ci"><div class="ci-num">1</div><div class="ci-text">Groww &rarr; Holdings &rarr; Tap <strong>SUNPHARMA</strong> &rarr; <strong>Trigger orders</strong></div></div>
+      <div class="ci"><div class="ci-num">2</div><div class="ci-text">Tap <strong>Sell</strong> &middot; Set <strong>Qty NSE</strong> = <span id="gStep-qty">&mdash;</span></div></div>
+      <div class="ci"><div class="ci-num">3</div><div class="ci-text"><strong>If price reaches:</strong> <span id="gStep-sl">&mdash;</span> (Fixed SL)</div></div>
+      <div class="ci"><div class="ci-num">4</div><div class="ci-text"><strong>Limit price:</strong> <span id="gStep-limit">&mdash;</span> (auto-fill below trigger)</div></div>
+      <div class="ci"><div class="ci-num">5</div><div class="ci-text">Tap <strong>Set trigger order</strong> &middot; Validity: 1 year</div></div>
+      <div class="ci"><div class="ci-num">6</div><div class="ci-text">When LTP hits <span id="gStep-tslAct">&mdash;</span> &rarr; Edit GTT &rarr; change to <span id="gStep-tsl">&mdash;</span></div></div>
+      <div class="ci"><div class="ci-num">7</div><div class="ci-text">Optional 2nd trigger for TP: <strong>If price reaches</strong> <span id="gStep-tp">&mdash;</span></div></div>
+    </div>
+  </div>
+
+  <!-- &#9472;&#9472; KITE PANEL &#9472;&#9472; -->
+  <div id="panelKite" style="display:none">
+    <div class="platform-order">
+      <div class="platform-hdr-kite">&#128309; GTT &mdash; SELL &middot; CNC &middot; REGULAR &middot; SL</div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">Trigger price</div>
+          <div class="of-desc">Fixed SL &mdash; set first</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val red" id="k-trigger">&mdash;</div>
+          <button class="copy-btn" style="background:var(--danger);color:#fff" onclick="copyField('k-trigger',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">Price <span style="font-size:9px;color:var(--muted2)">(Limit)</span></div>
+          <div class="of-desc" id="k-limit-desc">0.5% below trigger</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val amber" id="k-limit">&mdash;</div>
+          <button class="copy-btn" style="background:var(--warn);color:#000" onclick="copyField('k-limit',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field">
+        <div class="of-left">
+          <div class="of-name">Qty.</div>
+          <div class="of-desc">Number of shares</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val" id="k-qty">&mdash;</div>
+          <button class="copy-btn" style="background:var(--bg4);color:var(--text);border:1px solid var(--border)" onclick="copyField('k-qty',this)">COPY</button>
+        </div>
+      </div>
+
+      <div class="order-field" style="background:rgba(0,180,216,.04)">
+        <div class="of-left">
+          <div class="of-name">Trigger price <span style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace">TSL UPDATE</span></div>
+          <div class="of-desc">Edit GTT when TSL activates</div>
+        </div>
+        <div class="of-right">
+          <div class="of-val blue" id="k-tsl">&mdash;</div>
+          <button class="copy-btn" style="background:var(--accent2);color:#fff" onclick="copyField('k-tsl',this)">COPY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-box">
+      <div class="tp-box-text">&#127919; Take Profit &mdash; <em>Trigger price:</em> <strong id="k-tp">&mdash;</strong></div>
+      <button class="copy-btn" style="background:var(--accent);color:#000" onclick="copyField('k-tp',this)">COPY</button>
+    </div>
+
+    <div class="checklist">
+      <span class="check-lbl">Setup Steps</span>
+      <div class="ci"><div class="ci-num">1</div><div class="ci-text">Kite &rarr; Holdings or Positions &rarr; Click <strong>SUNPHARMA</strong> &rarr; <strong>GTT</strong></div></div>
+      <div class="ci"><div class="ci-num">2</div><div class="ci-text">Tab: <strong>Regular</strong> &middot; Order: <strong>Sell</strong> &middot; Type: <strong>SL</strong> &middot; Product: <strong>CNC / Longterm</strong></div></div>
+      <div class="ci"><div class="ci-num">3</div><div class="ci-text"><strong>Trigger price:</strong> <span id="kStep-trigger">&mdash;</span> &middot; <strong>Price:</strong> <span id="kStep-limit">&mdash;</span></div></div>
+      <div class="ci"><div class="ci-num">4</div><div class="ci-text"><strong>Qty.</strong> = <span id="kStep-qty">&mdash;</span> &middot; Click <strong>Sell</strong> button</div></div>
+      <div class="ci"><div class="ci-num">5</div><div class="ci-text"><strong>&#9888; SOLD HOLDING:</strong> If Kite shows &minus;2, close that position first or reduce qty by 2</div></div>
+      <div class="ci"><div class="ci-num">6</div><div class="ci-text">When LTP hits <span id="kStep-tslAct">&mdash;</span> &rarr; Edit GTT trigger to <span id="kStep-tsl">&mdash;</span></div></div>
+      <div class="ci"><div class="ci-num">7</div><div class="ci-text">Optional TP GTT (2nd order): trigger = <span id="kStep-tp">&mdash;</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO TABLE -->
+<div class="sec">
+  <div class="sec-ttl"><span class="dot"></span>Exit Scenario Analysis</div>
+  <div class="scen-wrap">
+    <table>
+      <thead><tr><th>SCENARIO</th><th>EXIT PRICE</th><th>P&L (&#8377;)</th><th>RETURN</th></tr></thead>
+      <tbody id="scenBody"><tr><td colspan="4" style="color:var(--muted2);text-align:center;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px">Enter position details above &uarr;</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- COPY ALL SUMMARY -->
+<div class="copyall-box" id="copyallBox">
+  <button class="ca-btn" onclick="copyAll()">COPY ALL</button>
+  <span id="summaryText" style="color:var(--muted2)">Summary will appear after you enter position details.</span>
+</div>
+
+<div class="disclaimer">
+  <strong>&#9888; Risk Disclaimer &mdash; Educational Tool Only</strong><br/>
+  This is a mathematical calculator for TSL/GTT price levels. Not financial advice. All trading involves risk of capital loss. Verify all values before placing orders.
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <button class="sbtn sbtn-reset" onclick="clearAll()">RESET</button>
+  <button class="sbtn sbtn-copy" onclick="copyAll()">COPY ALL</button>
+  <button class="sbtn sbtn-tg" onclick="sendTelegram()">&#128232; TELEGRAM</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeIfOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-ttl">Add Your Position</div>
+    <div class="modal-body">
+      <div class="mrow">
+        <div class="mfield"><label>Symbol</label><input type="text" id="mSym" placeholder="SUNPHARMA" oninput="this.value=this.value.toUpperCase()"/></div>
+        <div class="mfield"><label>Currency</label><select id="mCurr"><option value="INR">INR (&#8377;)</option><option value="USD">USD ($)</option></select></div>
+      </div>
+      <div class="mrow">
+        <div class="mfield"><label>Buy Price (Avg)</label><input type="number" id="mBuy" placeholder="1750.65"/></div>
+        <div class="mfield"><label>Current LTP</label><input type="number" id="mLTP" placeholder="1834"/></div>
+      </div>
+      <div class="mfield"><label>Quantity (Net Shares)</label><input type="number" id="mQty" placeholder="10"/></div>
+    </div>
+    <div class="modal-acts">
+      <button class="mbtn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="mbtn-save" onclick="savePos()">Save Position &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GLOBALS ─────────────────────────────────────────────────────────────────
+const STORE = 'gtt_v6_positions';
+let currMode = 'INR';
+let activeId = null;
+let S = {};
+
+const f2 = n => Math.round(n * 100) / 100;
+const fmt = n => (n === null || isNaN(n)) ? '—' : (currMode === 'USD' ? '$' : '₹') + Math.abs(n).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const pct = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+const rawNum = str => str.replace(/[₹$,+\s]/g, '').trim();
+
+// ── STORAGE ──────────────────────────────────────────────────────────────────
+function loadPos() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } }
+function savePos2(list) { try { localStorage.setItem(STORE, JSON.stringify(list)); } catch {} }
+
+// ── CHIPS ────────────────────────────────────────────────────────────────────
+function renderChips() {
+  const list = loadPos();
+  const scroll = document.getElementById('posScroll');
+  scroll.querySelectorAll('.pos-chip').forEach(c => c.remove());
+  const empty = document.getElementById('posEmpty');
+  if (!list.length) { empty.style.display = ''; return; }
+  empty.style.display = 'none';
+  list.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'pos-chip' + (p.id === activeId ? ' active' : '');
+    const gain = p.ltp && p.buy ? ((p.ltp - p.buy) / p.buy * 100) : 0;
+    const gc = gain >= 0 ? 'var(--accent)' : 'var(--danger)';
+    const gs = p.ltp ? (gain >= 0 ? '+' : '') + gain.toFixed(1) + '%' : 'no LTP';
+    chip.innerHTML =
+      '<span class="chip-del" onclick="delPos(event,\'' + p.id + '\')">✕</span>' +
+      '<div class="pos-chip-sym">' + p.sym + '</div>' +
+      '<div class="pos-chip-sub" style="color:' + gc + '">' + gs + ' · ' + p.qty + ' sh</div>';
+    chip.addEventListener('click', () => activatePos(p.id));
+    scroll.appendChild(chip);
+  });
+}
+
+function activatePos(id) {
+  const p = loadPos().find(x => x.id === id);
+  if (!p) return;
+  activeId = id;
+  currMode = p.curr;
+  ['cs1','cs2','cs3'].forEach(i => document.getElementById(i).textContent = p.curr === 'USD' ? '$' : '₹');
+  document.getElementById('buyPrice').value = p.buy;
+  document.getElementById('ltp').value = p.ltp || '';
+  document.getElementById('qty').value = p.qty;
+  document.getElementById('posSecTitle').textContent = 'Position — ' + p.sym;
+  renderChips();
+  validateLTP();
+  calc();
+  document.getElementById('posDetailSec').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function delPos(e, id) {
+  e.stopPropagation();
+  const list = loadPos().filter(p => p.id !== id);
+  savePos2(list);
+  if (activeId === id) { activeId = null; clearAll(); document.getElementById('posSecTitle').textContent = 'Position Details'; }
+  renderChips();
+}
+
+// ── MODAL ────────────────────────────────────────────────────────────────────
+function openModal() {
+  ['mSym','mBuy','mLTP','mQty'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mCurr').value = 'INR';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('mSym').focus(), 120);
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeIfOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+function savePos() {
+  const sym = document.getElementById('mSym').value.trim().toUpperCase();
+  const curr = document.getElementById('mCurr').value;
+  const buy = parseFloat(document.getElementById('mBuy').value);
+  const ltp = parseFloat(document.getElementById('mLTP').value) || null;
+  const qty = parseFloat(document.getElementById('mQty').value);
+  if (!sym || !buy || buy <= 0 || !qty || qty <= 0) { alert('Please fill Symbol, Buy Price and Qty'); return; }
+  const pos = { id: Date.now().toString(), sym, curr, buy, ltp, qty };
+  const list = loadPos();
+  list.push(pos);
+  savePos2(list);
+  closeModal();
+  renderChips();
+  activatePos(pos.id);
+}
+
+// ── VALIDATE LTP ─────────────────────────────────────────────────────────────
+function validateLTP() {
+  const buy = parseFloat(document.getElementById('buyPrice').value) || 0;
+  const ltp = parseFloat(document.getElementById('ltp').value) || 0;
+  const qty = parseFloat(document.getElementById('qty').value) || 1;
+  const warn = document.getElementById('ltpWarn');
+  if (buy > 0 && ltp > 0) {
+    const capital = buy * qty;
+    const looks = Math.abs(ltp - capital) < capital * 0.05 && ltp > buy * 2;
+    warn.classList.toggle('show', looks || ltp > buy * 5);
+  } else warn.classList.remove('show');
+}
+
+function prefillLTP() {
+  const b = document.getElementById('buyPrice').value;
+  if (b) { document.getElementById('ltp').value = b; document.getElementById('ltpWarn').classList.remove('show'); calc(); }
+}
+
+function changeQty(d) {
+  const el = document.getElementById('qty');
+  el.value = Math.max(1, (parseFloat(el.value) || 0) + d);
+  calc();
+}
+
+// ── MAIN CALC ────────────────────────────────────────────────────────────────
+function calc() {
+  const buy = parseFloat(document.getElementById('buyPrice').value);
+  const ltp = parseFloat(document.getElementById('ltp').value);
+  const qty = parseFloat(document.getElementById('qty').value);
+  const slPct = parseFloat(document.getElementById('slPct').value) / 100;
+  const tslActPct = parseFloat(document.getElementById('tslActPct').value) / 100;
+  const trailPct = parseFloat(document.getElementById('trailPct').value) / 100;
+  const bufPct = parseFloat(document.getElementById('bufPct').value) / 100;
+  const tpPct = parseFloat(document.getElementById('tpPct').value) / 100;
+
+  if (!buy || !qty) { resetDisplay(); return; }
+
+  const capital = buy * qty;
+  document.getElementById('capitalDisp').textContent = capital.toLocaleString('en-IN', {minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('capitalHelper').textContent = '= ' + fmt(buy) + ' × ' + qty + ' shares';
+
+  // Computed levels
+  const sl = f2(buy * (1 - slPct));
+  const slLimit = f2(sl * (1 - bufPct));
+  const tslAct = f2(buy * (1 + tslActPct));
+  const tp = f2(buy * (1 + tpPct));
+  const peakPrice = ltp ? Math.max(ltp, tslAct) : tslAct;
+  const trailSL = f2(peakPrice * (1 - trailPct));
+  const trailLimit = f2(trailSL * (1 - bufPct));
+  const tslActive = !!ltp && ltp >= tslAct;
+  const gainPct = ltp ? ((ltp - buy) / buy) * 100 : 0;
+  const progToTSL = Math.min(100, Math.max(0, gainPct / (tslActPct * 100) * 100));
+
+  // Progress bar
+  document.getElementById('pbarFill').style.width = progToTSL + '%';
+  document.getElementById('progressPct').textContent = progToTSL.toFixed(0) + '%';
+  document.getElementById('progressLbl').textContent = tslActive
+    ? '✅ TSL ACTIVE — Trailing is live!'
+    : 'Need ' + (tslActPct*100).toFixed(0) + '% gain to activate trailing';
+  document.getElementById('stopBuy').textContent = fmt(buy);
+  document.getElementById('stopTSL').textContent = fmt(tslAct);
+  document.getElementById('stopTP').textContent = fmt(tp);
+
+  // Metrics
+  const pnl = ltp ? (ltp - buy) * qty : 0;
+  const portfolio = ltp ? ltp * qty : capital;
+  const slLoss = (sl - buy) * qty;
+  const maxProfit = tslActive ? (trailSL - buy) * qty : null;
+
+  const pnlEl = document.getElementById('mPnl');
+  pnlEl.textContent = ltp ? fmt(pnl) : '—';
+  pnlEl.className = 'mval ' + (pnl >= 0 ? 'green' : 'red');
+  document.getElementById('mPnlPct').textContent = ltp ? pct(gainPct) + ' on capital' : '—';
+  document.getElementById('mPortfolio').textContent = ltp ? fmt(portfolio) : '—';
+  document.getElementById('mReturn').textContent = ltp ? pct((portfolio - capital) / capital * 100) + ' return' : '—';
+  document.getElementById('mSLLoss').textContent = fmt(slLoss);
+  document.getElementById('mMaxProfit').textContent = maxProfit !== null ? fmt(maxProfit) : '—';
+  document.getElementById('mMaxSub').textContent = tslActive ? 'if TSL hit now' : 'activate TSL first';
+
+  // Price map
+  document.getElementById('mapBuy').textContent = fmt(buy);
+  document.getElementById('mapSL').textContent = fmt(sl);
+  document.getElementById('mapSLPct').textContent = '-' + (slPct*100).toFixed(1) + '%';
+  document.getElementById('mapTP').textContent = fmt(tp);
+  document.getElementById('mapTPPct').textContent = '+' + (tpPct*100).toFixed(1) + '%';
+  document.getElementById('mapTSLAct').textContent = fmt(tslAct);
+  document.getElementById('mapTSLActPct').textContent = '+' + (tslActPct*100).toFixed(1) + '%';
+  if (tslActive) { document.getElementById('mapTSLBadge').textContent = '✓ HIT'; }
+  if (ltp) {
+    document.getElementById('mapCurrent').textContent = fmt(ltp);
+    document.getElementById('mapCurrentPct').textContent = pct(gainPct);
+    document.getElementById('mapCurrentBadge').textContent = ltp >= buy ? 'PROFIT' : 'LOSS';
+  }
+  document.getElementById('mapTrail').textContent = fmt(trailSL);
+  document.getElementById('mapTrailPct').textContent = pct((trailSL - buy) / buy * 100);
+  document.getElementById('mapTrailBadge').textContent = tslActive ? 'ACTIVE' : 'INACTIVE';
+  document.getElementById('mapTrail').style.color = tslActive ? 'var(--accent)' : 'var(--muted2)';
+
+  // Groww fields (raw numbers for copy)
+  const slStr = sl.toFixed(2);
+  const slLimStr = slLimit.toFixed(2);
+  const trailStr = trailSL.toFixed(2);
+  const tpStr = tp.toFixed(2);
+  const qtyStr = qty.toString();
+
+  setField('g-trigger', slStr);
+  setField('g-qty', qtyStr);
+  setField('g-limit', slLimStr);
+  setField('g-tsl', tslActive ? trailStr : '(TSL not active yet)');
+  setField('g-tp', tpStr);
+  document.getElementById('g-limit-desc').textContent = (bufPct*100).toFixed(1) + '% below trigger';
+
+  // Kite fields
+  setField('k-trigger', slStr);
+  setField('k-limit', slLimStr);
+  setField('k-qty', qtyStr);
+  setField('k-tsl', tslActive ? trailStr : '(TSL not active yet)');
+  setField('k-tp', tpStr);
+  document.getElementById('k-limit-desc').textContent = (bufPct*100).toFixed(1) + '% below trigger';
+
+  // Step references - Groww
+  setText('gStep-qty', qtyStr);
+  setText('gStep-sl', fmt(sl));
+  setText('gStep-limit', fmt(slLimit));
+  setText('gStep-tslAct', fmt(tslAct));
+  setText('gStep-tsl', tslActive ? fmt(trailSL) : 'TBD');
+  setText('gStep-tp', fmt(tp));
+
+  // Step references - Kite
+  setText('kStep-trigger', fmt(sl));
+  setText('kStep-limit', fmt(slLimit));
+  setText('kStep-qty', qtyStr);
+  setText('kStep-tslAct', fmt(tslAct));
+  setText('kStep-tsl', tslActive ? fmt(trailSL) : 'TBD');
+  setText('kStep-tp', fmt(tp));
+
+  // Scenario table
+  const scenarios = [
+    { name: '🔴 Fixed SL Hit', price: sl },
+    { name: '😐 Break Even', price: buy },
+    { name: '📈 +5% Move', price: f2(buy*1.05) },
+    { name: '⚡ TSL Activates', price: tslAct, hi: true },
+    { name: '🔁 TSL Trail Exit', price: trailSL, hi: tslActive },
+    { name: '🎯 Take Profit', price: tp },
+  ];
+  if (ltp && Math.abs(ltp - buy) > 0.5) scenarios.splice(2, 0, { name:'📍 Current LTP', price:ltp, hi:true });
+
+  document.getElementById('scenBody').innerHTML = scenarios.map(s => {
+    const pl = (s.price - buy) * qty;
+    const r = (s.price - buy) / buy * 100;
+    return '<tr class="' + (s.hi ? 'trow-hi' : '') + '">'
+      + '<td style="color:var(--text)">' + s.name + '</td>'
+      + '<td style="font-family:\'JetBrains Mono\',monospace;font-size:11px">' + fmt(s.price) + '</td>'
+      + '<td style="font-family:\'JetBrains Mono\',monospace;color:' + (pl >= 0 ? 'var(--accent)' : 'var(--danger)') + '">' + (pl >= 0 ? '+' : '') + fmt(pl) + '</td>'
+      + '<td style="font-family:\'JetBrains Mono\',monospace;color:' + (r >= 0 ? 'var(--accent)' : 'var(--danger)') + '">' + pct(r) + '</td>'
+      + '</tr>';
+  }).join('');
+
+  // Summary box
+  document.getElementById('summaryText').style.color = 'var(--text)';
+  document.getElementById('summaryText').textContent =
+    '── GTT FIGURES ──────────────────\n'
+    + 'Symbol  : ' + (document.getElementById('posSecTitle').textContent.replace('Position — ','') || 'UNKNOWN') + '\n'
+    + 'Buy     : ' + fmt(buy) + ' × ' + qty + ' = ' + fmt(capital) + '\n'
+    + 'Fixed SL: ' + fmt(sl) + ' (trigger) / ' + fmt(slLimit) + ' (limit)\n'
+    + 'TSL at  : ' + fmt(tslAct) + ' → Trail: ' + fmt(trailSL) + '\n'
+    + 'Take TP : ' + fmt(tp) + '\n'
+    + 'P&L now : ' + (ltp ? (pnl >= 0 ? '+' : '') + fmt(pnl) + ' (' + pct(gainPct) + ')' : 'LTP not set');
+
+  S = { buy, ltp, qty, sl, slLimit, tslAct, trailSL, tp, capital, pnl };
+}
+
+function setField(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function resetDisplay() {
+  document.getElementById('capitalDisp').textContent = '—';
+  document.getElementById('pbarFill').style.width = '0%';
+  document.getElementById('progressPct').textContent = '0%';
+  document.getElementById('progressLbl').textContent = 'Waiting for TSL activation...';
+  ['mPnl','mPortfolio','mSLLoss','mMaxProfit','mPnlPct','mReturn',
+   'mapBuy','mapSL','mapSLPct','mapTP','mapTPPct','mapTSLAct','mapTSLActPct','mapCurrent','mapCurrentPct','mapTrail','mapTrailPct',
+   'g-trigger','g-qty','g-limit','g-tsl','g-tp','k-trigger','k-limit','k-qty','k-tsl','k-tp'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+  document.getElementById('scenBody').innerHTML = '<tr><td colspan="4" style="color:var(--muted2);text-align:center;padding:16px;font-family:\'JetBrains Mono\',monospace;font-size:11px">Enter position details above ↑</td></tr>';
+  document.getElementById('summaryText').textContent = 'Summary will appear after you enter position details.';
+  document.getElementById('summaryText').style.color = 'var(--muted2)';
+}
+
+function clearAll() {
+  ['buyPrice','ltp','qty'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ltpWarn').classList.remove('show');
+  S = {};
+  resetDisplay();
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  const g = tab === 'groww';
+  document.getElementById('panelGroww').style.display = g ? '' : 'none';
+  document.getElementById('panelKite').style.display = g ? 'none' : '';
+  const tG = document.getElementById('tabGroww');
+  const tK = document.getElementById('tabKite');
+  tG.className = 'tab-btn' + (g ? ' active' : '');
+  tK.className = 'tab-btn' + (g ? '' : ' active');
+}
+
+// ── COPY ─────────────────────────────────────────────────────────────────────
+function copyField(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.textContent;
+  if (text === '—' || text.includes('not active') || text === 'TBD') return;
+  const clean = rawNum(text);
+  navigator.clipboard.writeText(clean).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ DONE';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1400);
+  });
+}
+
+function copyAll() {
+  const text = document.getElementById('summaryText').textContent;
+  if (!text || text.includes('Enter position')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.sbtn-copy');
+    btn.textContent = '✓ COPIED!';
+    setTimeout(() => btn.textContent = 'COPY ALL', 1600);
+  });
+}
+
+function sendTelegram() {
+  if (!S.buy) { alert('Enter position details first'); return; }
+  const text = document.getElementById('summaryText').textContent;
+  window.open('https://t.me/share/url?url=&text=' + encodeURIComponent(text), '_blank');
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const light = document.body.classList.toggle('light');
+  document.getElementById('themeBtn').textContent = light ? '🌙 DARK' : '☀ LIGHT';
+  try { localStorage.setItem('gtt_v6_theme', light ? 'light' : 'dark'); } catch {}
+}
+try { if (localStorage.getItem('gtt_v6_theme') === 'light') { document.body.classList.add('light'); document.getElementById('themeBtn').textContent = '🌙 DARK'; } } catch {}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderChips();
+calc();
+</script>
+</body>
+</html>
