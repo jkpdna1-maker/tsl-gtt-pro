@@ -952,6 +952,17 @@ function toggleTheme() {
 try { if (localStorage.getItem('gtt_v6_theme') === 'light') { document.body.classList.add('light'); document.getElementById('themeBtn').textContent = '🌙 DARK'; } } catch {}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+// Force slider defaults (fixes Blogger iframe fractional value bug)
+document.getElementById('slPct').value = 5;
+document.getElementById('slPctV').textContent = '5%';
+document.getElementById('tslActPct').value = 10;
+document.getElementById('tslActV').textContent = '10%';
+document.getElementById('trailPct').value = 5;
+document.getElementById('trailV').textContent = '5%';
+document.getElementById('bufPct').value = 0.5;
+document.getElementById('bufV').textContent = '0.5%';
+document.getElementById('tpPct').value = 8;
+document.getElementById('tpPctV').textContent = '8%';
 renderChips();
 calc();
 </script>
